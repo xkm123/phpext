@@ -1,13 +1,13 @@
 <?php
-namespace PhpExt\logger;
+namespace php_ext\logger;
 
-use PhpExt\logger\driver\LogInterface;
+use php_ext\logger\driver\LogInterface;
 
 /**
  * 日志类
  * Class Logger
  *
- * @package PhpExt\logger
+ * @package php_ext\logger
  */
 class Logger
 {

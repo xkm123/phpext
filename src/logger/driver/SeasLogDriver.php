@@ -1,5 +1,5 @@
 <?php
-namespace PhpExt\logger\driver;
+namespace php_ext\logger\driver;
 
 use SeasLog;
 
@@ -7,7 +7,7 @@ use SeasLog;
  * SeasLog驱动
  * Class SeasLogDriver
  *
- * @package PhpExt\logger
+ * @package php_ext\logger
  */
 class SeasLogDriver implements LogInterface
 {

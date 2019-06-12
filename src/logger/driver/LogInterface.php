@@ -1,11 +1,11 @@
 <?php
-namespace PhpExt\logger\driver;
+namespace php_ext\logger\driver;
 
 /**
  * Log委托类接口
  * Class LogInterface
  *
- * @package PhpExt\logger\driver
+ * @package php_ext\logger\driver
  */
 interface LogInterface
 {

@@ -1,5 +1,5 @@
 <?php
-namespace PhpExt\logger\driver;
+namespace php_ext\logger\driver;
 
 class FileDriver implements LogInterface
 {
