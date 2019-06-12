@@ -1,5 +1,5 @@
 {
-  "name": "php-ext",
+  "name": "fcjy/php-ext",
   "type": "library",
   "description": "Meng Resource Extend for PHP",
   "keywords": [
