@@ -129,7 +129,7 @@ class SeasLogDriver implements LogInterface
     public function analyzerDetail($level = self::LOG_ALL, $log_path = '*', $key_word = null, $start = 1,
         $limit = 20, $order = self::LOG_DETAIL_ORDER_ASC)
     {
-        if (IS_WIN) {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             return $this->logger->analyzerDetail($level, $log_path, $key_word);
         }
         return $this->logger->analyzerDetail($level, $log_path, $key_word, $start, $limit, $order);

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpLanguageLevelInspection */
 namespace php_ext\logger;
 
 use php_ext\logger\driver\LogInterface;
@@ -154,7 +154,7 @@ class Logger
     {
         $this->config = array_merge($this->config, $config);
         $type = $this->config['driver'];
-        $class = false !== strpos($type, '\\') ? $type : '\\ext_log\\driver\\' . ucwords($type);
+        $class = false !== strpos($type, '\\') ? $type : '\\php_ext\\logger\\driver\\' . ucwords($type);
         $this->logger = new $class($this->config['base_path']);
         $this->logger->setDefaultTemplate($this->config['default_template']);
         $this->logger->setDateTimeFormat($this->config['datetime_format']);
@@ -578,6 +578,7 @@ class Logger
             $model = $this->defaultLoggerModel;
         }
         $this->tempModel = $model;
+        $this->logger->setDefaultLogger($this->tempModel);
         return $this;
     }
 
