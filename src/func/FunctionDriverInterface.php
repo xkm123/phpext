@@ -31,8 +31,6 @@ interface FunctionDriverInterface
      * @param string       $level 级别
      * @param null|string  $tag   标识
      * @param null|string  $model 模型名
-     *
-     * @return $this
      */
     public static function log($msg, $level = 'debug', $tag = null, $model = null);
 }

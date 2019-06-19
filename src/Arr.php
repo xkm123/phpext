@@ -139,7 +139,7 @@ class Arr
     }
 
     /**
-     *移除参数
+     * 移除参数
      *
      * @param array $params 需要检查的参数集合
      * @param array $rules  检查的规则
@@ -186,5 +186,26 @@ class Arr
             $data[$k]['children'] = self::tree($data, $idKey, $pidKey, $v[$idKey]);
         }
         return $data;
+    }
+    /**
+     * 过滤数据
+     *
+     * @param  array $params     请求参数
+     * @param  array $whiteRules 白名单
+     * @param array  $blackRules 黑名单
+     *
+     * @return array
+     */
+    public static function filter($params, $whiteRules, $blackRules = [])
+    {
+        if (empty($whiteRules) && empty($blackRules)) {
+            return $params;
+        }
+        foreach ($params as $k => $v) {
+            if (!in_array($k, $whiteRules) || in_array($k, $blackRules)) {
+                unset($params[$k]);
+            }
+        }
+        return $params;
     }
 }
