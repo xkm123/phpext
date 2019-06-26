@@ -295,11 +295,11 @@ class FileDriver implements LogInterface
         $result = self::replace($result, "%Q", $this->requestID);
         $result = self::replace($result, "%t", time());
         $result = self::replace($result, "%M", $message);
-        $dirPath = $this->basePath . DS . $module;
+        $dirPath = $this->basePath . DIRECTORY_SEPARATOR . $module;
         self::createDir($dirPath);
-        $fileName = $dirPath . DS . date("Ymd", time()) . ".log";
+        $fileName = $dirPath . DIRECTORY_SEPARATOR . date("Ymd", time()) . ".log";
         $this->requestID = '';
-        return error_log($result, 3, $fileName);
+        return error_log($result . "\n", 3, $fileName);
     }
 
     /**
@@ -453,7 +453,21 @@ class FileDriver implements LogInterface
     public function analyzerDetail($level = self::LOG_ALL, $log_path = '*', $key_word = null, $start = 1,
         $limit = 20, $order = self::LOG_DETAIL_ORDER_ASC)
     {
-        return [];
+        $path = $this->basePath . '/' . $this->module . '/';
+        if (!empty($log_path) && intval($log_path)) {
+            $path .= trim($log_path) . '.log';
+        } else {
+            $path .= date('Ymd', time()) . '.log';
+        }
+        if ($level != self::LOG_ALL) {
+            $key_word = " | " . $level . " | ";
+        }
+        $result = $this->readFileByLine($path, $key_word, $start, $limit, $order);
+        if (is_string($result)) {
+            return [];
+        } else {
+            return $result;
+        }
     }
 
     /**
@@ -468,5 +482,119 @@ class FileDriver implements LogInterface
     public function analyzerCount($level = self::LOG_ALL, $log_path = null, $key_word = null)
     {
         return $level == self::LOG_ALL ? [] : 0;
+    }
+
+    /**
+     * 读取文件
+     *
+     * @param string $fileName 文件名称
+     * @param string $key      关键字
+     * @param int    $start    起始行
+     * @param int    $limit    数量
+     * @param bool   $revers   是否反向
+     *
+     * @return array|string
+     */
+    public function readFileByLine($fileName, $key = "", $start = 0, $limit = 20, $revers = false)
+    {
+        if ($limit <= 0) {
+            return array();
+        }
+        $start = $start < 0 ? 0 : $start;
+        if (!$fp = fopen($fileName, 'r')) {
+            return "打开文件失败，请检查文件路径是否正确：" . $fileName;
+        }
+        if (!$revers) {
+            $result = self::readFileAsc($fp, $key, $start, $limit);
+        } else {
+            $result = self::readFileDesc($fp, $key, $start, $limit);
+        }
+        fclose($fp);
+        return $result;
+    }
+
+    /**
+     * 正序读取文件
+     *
+     * @param resource $fp    文件句柄
+     * @param string   $key   关键字
+     * @param int      $start 起始行
+     * @param int      $limit 数量
+     *
+     * @return array|string
+     */
+    private function readFileAsc($fp, $key = "", $start = 0, $limit = 20)
+    {
+        $result = array();
+        $curLine = 0;
+        while (!feof($fp)) {
+            if ($content = fgets($fp) == false) {
+                break;
+            }
+            $curLine++;
+            if (!empty(trim($content)) && $curLine >= $start) {
+                if (!empty($key)) {
+                    if (mb_strpos($content, $key) !== false) {
+                        array_push($result, $content);
+                        $limit--;
+                    }
+                } else {
+                    array_push($result, $content);
+                    $limit--;
+                }
+            }
+            if ($limit <= 0) {
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 倒叙读取文件
+     *
+     * @param resource $fp    文件句柄
+     * @param string   $key   关键字
+     * @param int      $start 起始行
+     * @param int      $limit 数量
+     *
+     * @return array|string
+     */
+    private function readFileDesc($fp, $key = "", $start = 0, $limit = 20)
+    {
+        $result = array();
+        $curLine = 0;
+        $pos = -2;
+        $eof = "";
+        //输出文本中所有的行，直到文件结束为止。
+        while (!feof($fp)) {
+            while ($eof != "\n") {//这里控制从文件的最后一行开始读
+                if (!fseek($fp, $pos, SEEK_END)) {
+                    $eof = fgetc($fp);
+                    $pos--;
+                } else {
+                    break;
+                }
+            }
+            if ($content = fgets($fp) == false) {
+                break;
+            }
+            $curLine++;
+            if (!empty(trim($content)) && $curLine >= $start) {
+                if (!empty($key)) {
+                    if (mb_strpos($content, $key) !== false) {
+                        array_push($result, $content);
+                        $limit--;
+                    }
+                } else {
+                    array_push($result, $content);
+                    $limit--;
+                }
+            }
+            if ($limit <= 0) {
+                break;
+            }
+        }
+        return $result;
     }
 }

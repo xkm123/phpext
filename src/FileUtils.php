@@ -894,4 +894,118 @@ class FileUtils
         }
         return $zip->close();
     }
+
+    /**
+     * 读取文件
+     *
+     * @param string $fileName 文件名称
+     * @param string $key      关键字
+     * @param int    $start    起始行
+     * @param int    $limit    数量
+     * @param bool   $revers   是否反向
+     *
+     * @return array|string
+     */
+    public static function readFileByLine($fileName, $key = "", $start = 0, $limit = 20, $revers = false)
+    {
+        if ($limit <= 0) {
+            return array();
+        }
+        $start = $start < 0 ? 0 : $start;
+        if (!$fp = fopen($fileName, 'r')) {
+            return "打开文件失败，请检查文件路径是否正确：" . $fileName;
+        }
+        if (!$revers) {
+            $result = self::readFileAsc($fp, $key, $start, $limit);
+        } else {
+            $result = self::readFileDesc($fp, $key, $start, $limit);
+        }
+        fclose($fp);
+        return $result;
+    }
+
+    /**
+     * 正序读取文件
+     *
+     * @param resource $fp    文件句柄
+     * @param string   $key   关键字
+     * @param int      $start 起始行
+     * @param int      $limit 数量
+     *
+     * @return array|string
+     */
+    private static function readFileAsc($fp, $key = "", $start = 0, $limit = 20)
+    {
+        $result = array();
+        $curLine = 0;
+        while (!feof($fp)) {
+            if ($content = fgets($fp) == false) {
+                break;
+            }
+            $curLine++;
+            if (!empty(trim($content)) && $curLine >= $start) {
+                if (!empty($key)) {
+                    if (mb_strpos($content, $key) !== false) {
+                        array_push($result, $content);
+                        $limit--;
+                    }
+                } else {
+                    array_push($result, $content);
+                    $limit--;
+                }
+            }
+            if ($limit <= 0) {
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 倒叙读取文件
+     *
+     * @param resource $fp    文件句柄
+     * @param string   $key   关键字
+     * @param int      $start 起始行
+     * @param int      $limit 数量
+     *
+     * @return array|string
+     */
+    private static function readFileDesc($fp, $key = "", $start = 0, $limit = 20)
+    {
+        $result = array();
+        $curLine = 0;
+        $pos = -2;
+        $eof = "";
+        //输出文本中所有的行，直到文件结束为止。
+        while (!feof($fp)) {
+            while ($eof != "\n") {//这里控制从文件的最后一行开始读
+                if (!fseek($fp, $pos, SEEK_END)) {
+                    $eof = fgetc($fp);
+                    $pos--;
+                } else {
+                    break;
+                }
+            }
+            if ($content = fgets($fp) == false) {
+                break;
+            }
+            $curLine++;
+            if (!empty(trim($content)) && $curLine >= $start) {
+                if (!empty($key)) {
+                    if (mb_strpos($content, $key) !== false) {
+                        array_push($result, $content);
+                        $limit--;
+                    }
+                } else {
+                    array_push($result, $content);
+                    $limit--;
+                }
+            }
+            if ($limit <= 0) {
+                break;
+            }
+        }
+        return $result;
+    }
 }

@@ -1,11 +1,11 @@
 <?php
-namespace zkbr\library\sign;
+namespace php_ext\sign;
 
 /**
  * 签名基类
  * Class BaseSignAbstract
  *
- * @package zkbr\library\sign
+ * @package php_ext\sign
  */
 abstract class BaseSignAbstract
 {
@@ -19,7 +19,7 @@ abstract class BaseSignAbstract
      *
      * @return string
      */
-    abstract public static function sign($data, $sign_key, $sign_name = 'sign', $append_key_name = 'key');
+    abstract public function sign($data, $sign_key, $sign_name = 'sign', $append_key_name = 'key');
 
     /**
      * 返回大写的MD5

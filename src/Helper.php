@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: 邢可盟
+ * User: 623279281@qq.com
  * Date: 2019/6/19
  * Time: 9:38
  */
@@ -15,7 +15,7 @@ use php_ext\parser\XmlParser;
 /**
  * 辅助类
  * Class Helper
- * User: 邢可盟
+ * User: 623279281@qq.com
  *
  * @package php_ext
  */

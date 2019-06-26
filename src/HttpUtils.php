@@ -3,7 +3,7 @@ namespace php_ext;
 
 /**
  * 封装基于curl的HTTP类库
- * Class HttpTool
+ * Class HttpUtils
  *
  * @package php_ext
  * 使用：

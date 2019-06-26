@@ -4,7 +4,7 @@ namespace php_ext\eventbus\template;
 /**
  * 事件数据包
  * Class EventData
- * User: 邢可盟
+ * User: 623279281@qq.com
  *
  * @package php_ext\eventbus\template
  */

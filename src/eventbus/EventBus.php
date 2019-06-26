@@ -6,7 +6,7 @@ use php_ext\eventbus\template\EventData;
 /**
  * 事件驱动
  * Class EventBus
- * User: 邢可盟
+ * User: 623279281@qq.com
  *
  * @package extlib\eventbus
  */

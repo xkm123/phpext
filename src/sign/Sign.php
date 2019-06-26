@@ -1,18 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: 邢可盟
+ * User: 623279281@qq.com
  * Date: 2019/6/19
  * Time: 9:24
  */
 namespace php_ext\sign;
 
-use zkbr\library\sign\BaseSignAbstract;
-
 /**
  * 签名工具
  * Class Sign
- * User: 邢可盟
+ * User: 623279281@qq.com
  *
  * @package php_ext\sign
  */
@@ -28,7 +26,7 @@ class Sign extends BaseSignAbstract
      *
      * @return string
      */
-    public static function sign($data, $sign_key, $sign_name = 'sign', $append_key_name = 'key')
+    public function sign($data, $sign_key, $sign_name = 'sign', $append_key_name = 'key')
     {
         $array_data = self::convertParams($data, $sign_name);
         $result = "";
