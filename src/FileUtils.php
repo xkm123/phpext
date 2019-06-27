@@ -936,26 +936,16 @@ class FileUtils
             return "打开文件失败，请检查文件路径是否正确：" . $fileName;
         }
         $curLine = 0;
-        //输出文本中所有的行，直到文件结束为止。
-        while (!feof($fp)) {
-            $content = fgets($fp);//从文件指针中读取一行
-            if ($content == false) {
-                break;
-            }
+        while ($limit > 0 && !feof($fp) && $content = fgets($fp)) {
             $curLine++;
-            if (!empty(trim($content)) && $curLine >= $start) {
-                if (!empty($key)) {
-                    if (mb_strpos($content, $key) !== false) {
-                        array_push($result, $content);
-                        $limit--;
-                    }
-                } else {
+            if ($curLine >= $start && !empty(trim($content))) {
+                if (empty($key)) {
+                    array_push($result, $content);
+                    $limit--;
+                } elseif (mb_strpos($content, $key) !== false) {
                     array_push($result, $content);
                     $limit--;
                 }
-            }
-            if ($limit <= 0) {
-                break;
             }
         }
         fclose($fp);
@@ -978,38 +968,34 @@ class FileUtils
         if (!is_file($fileName) || !$fp = fopen($fileName, 'r')) {
             return "打开文件失败，请检查文件路径是否正确：" . $fileName;
         }
-        $curLine = 0;
-        $pos = -2;
-        $eof = "";
+        $tempParams = ['cur_line' => 0, 'pos' => -2, 'eof' => ''];
         //输出文本中所有的行，直到文件结束为止。
-        while (!feof($fp)) {
-            while ($eof != "\n") {//这里控制从文件的最后一行开始读
-                if (!fseek($fp, $pos, SEEK_END)) {
-                    $eof = fgetc($fp);
-                    $pos--;
+        while ($limit > 0 && !feof($fp)) {
+            while ($tempParams['eof'] != "\n") {//这里控制从文件的最后一行开始读
+                if (!fseek($fp, $tempParams['pos'], SEEK_END)) {
+                    $tempParams['eof'] = fgetc($fp);
+                    $tempParams['pos']--;
                 } else {
                     break;
                 }
             }
-            $content = fgets($fp);//从文件指针中读取一行
-            $eof = "";
-            if ($content == false) {
-                break;
+            if (($content = fgets($fp)) == false) {
+                fseek($fp, 0, SEEK_SET);
+                if (($content = fgets($fp)) == false) {
+                    break;
+                }
+                $limit = 0;
             }
-            $curLine++;
-            if (!empty(trim($content)) && $curLine >= $start) {
-                if (!empty($key)) {
-                    if (mb_strpos($content, $key) !== false) {
-                        array_push($result, $content);
-                        $limit--;
-                    }
-                } else {
+            $tempParams['eof'] = "";
+            $tempParams['cur_line']++;
+            if (!empty(trim($content)) && $tempParams['cur_line'] >= $start) {
+                if (empty($key)) {
+                    array_push($result, $content);
+                    $limit--;
+                } elseif (mb_strpos($content, $key) !== false) {
                     array_push($result, $content);
                     $limit--;
                 }
-            }
-            if ($limit <= 0) {
-                break;
             }
         }
         fclose($fp);
