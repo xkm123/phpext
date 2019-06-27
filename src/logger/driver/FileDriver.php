@@ -501,34 +501,34 @@ class FileDriver implements LogInterface
             return array();
         }
         $start = $start < 0 ? 0 : $start;
-        if (!is_file($fileName) || !$fp = fopen($fileName, 'r')) {
-            return "打开文件失败，请检查文件路径是否正确：" . $fileName;
-        }
         if (!$revers) {
-            $result = self::readFileAsc($fp, $key, $start, $limit);
+            return $this->readFileAsc($fileName, $key, $start, $limit);
         } else {
-            $result = self::readFileDesc($fp, $key, $start, $limit);
+            return $this->readFileDesc($fileName, $key, $start, $limit);
         }
-        fclose($fp);
-        return $result;
     }
 
     /**
      * 正序读取文件
      *
-     * @param resource $fp    文件句柄
-     * @param string   $key   关键字
-     * @param int      $start 起始行
-     * @param int      $limit 数量
+     * @param string $fileName 文件名称
+     * @param string $key      关键字
+     * @param int    $start    起始行
+     * @param int    $limit    数量
      *
      * @return array|string
      */
-    private function readFileAsc($fp, $key = "", $start = 0, $limit = 20)
+    private function readFileAsc($fileName, $key = "", $start = 0, $limit = 20)
     {
         $result = array();
+        if (!is_file($fileName) || !$fp = fopen($fileName, 'r')) {
+            return "打开文件失败，请检查文件路径是否正确：" . $fileName;
+        }
         $curLine = 0;
+        //输出文本中所有的行，直到文件结束为止。
         while (!feof($fp)) {
-            if ($content = fgets($fp) == false) {
+            $content = fgets($fp);//从文件指针中读取一行
+            if ($content == false) {
                 break;
             }
             $curLine++;
@@ -547,22 +547,26 @@ class FileDriver implements LogInterface
                 break;
             }
         }
+        fclose($fp);
         return $result;
     }
 
     /**
      * 倒叙读取文件
      *
-     * @param resource $fp    文件句柄
-     * @param string   $key   关键字
-     * @param int      $start 起始行
-     * @param int      $limit 数量
+     * @param string $fileName 文件名称
+     * @param string $key      关键字
+     * @param int    $start    起始行
+     * @param int    $limit    数量
      *
      * @return array|string
      */
-    private function readFileDesc($fp, $key = "", $start = 0, $limit = 20)
+    private function readFileDesc($fileName, $key = "", $start = 0, $limit = 20)
     {
         $result = array();
+        if (!is_file($fileName) || !$fp = fopen($fileName, 'r')) {
+            return "打开文件失败，请检查文件路径是否正确：" . $fileName;
+        }
         $curLine = 0;
         $pos = -2;
         $eof = "";
@@ -576,7 +580,9 @@ class FileDriver implements LogInterface
                     break;
                 }
             }
-            if ($content = fgets($fp) == false) {
+            $content = fgets($fp);//从文件指针中读取一行
+            $eof = "";
+            if ($content == false) {
                 break;
             }
             $curLine++;
@@ -595,6 +601,7 @@ class FileDriver implements LogInterface
                 break;
             }
         }
+        fclose($fp);
         return $result;
     }
 }
