@@ -912,7 +912,7 @@ class FileUtils
             return array();
         }
         $start = $start < 0 ? 0 : $start;
-        if (!$fp = fopen($fileName, 'r')) {
+        if (!is_file($fileName) || !$fp = fopen($fileName, 'r')) {
             return "打开文件失败，请检查文件路径是否正确：" . $fileName;
         }
         if (!$revers) {
