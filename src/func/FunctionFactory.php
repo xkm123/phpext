@@ -174,12 +174,13 @@ class FunctionFactory
      *
      * @param string     $message  消息
      * @param int|string $code     错误码
+     * @param array      $data     数据
      * @param string     $logLevel 日志级别
      */
-    public function returnFail($message = 'FAIL', $code = 400, $logLevel = 'error')
+    public function returnFail($message = 'FAIL', $code = 400, $data = [], $logLevel = 'error')
     {
         $this->rollback();
-        $result = BaseResult::instance([$code, $message]);
+        $result = BaseResult::instance([$code, $message, $data]);
         $this->log($result, $logLevel);
         $e = new FunctionException();
         $e->setBaseResult($result);
@@ -257,7 +258,7 @@ class FunctionFactory
     public function checkFailReturn($failStatus, $failMsg = 'FAIL', $failCode = 400, $logLevel = 'error')
     {
         if ($failStatus == true) {
-            $this->returnFail($failMsg, $failCode, $logLevel);
+            $this->returnFail($failMsg, $failCode, [], $logLevel);
         }
     }
 
